@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>@project@</id>
+        <version>@build.number@</version>
+        <authors>@authors@</authors>
+        <owners>@authors@</owners>
+        <licenseUrl>https://github.com/fsprojects/FSharp.Data.XenomorphProvider/blob/master/LICENSE.md</licenseUrl>
+        <projectUrl>https://github.com/fsprojects/FSharp.Data.XenomorphProvider</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>@description@</description>
+        <summary>@summary@</summary>
+		<releaseNotes>@releaseNotes@</releaseNotes>
+        <copyright>Copyright 2013</copyright>
+        <tags>@tags@</tags>
+        <frameworkAssemblies>
+            <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.0" />
+        </frameworkAssemblies>
+    </metadata>
+    <files>
+        <file src="..\src\XenomorphProvider\bin\Debug\FSharp.Data.Experimental.XenomorphProvider.dll" target="lib/net40\FSharp.Data.Experimental.XenomorphProvider.dll" />
+        <file src="..\src\XenomorphProvider\bin\Debug\FSharp.Data.Experimental.XenomorphProvider.dll.config" target="lib/net40\FSharp.Data.Experimental.XenomorphProvider.dll.config" />
+        <file src="..\src\XenomorphProvider\bin\Debug\FSharp.Data.Experimental.XenomorphProvider.pdb" target="lib/net40\FSharp.Data.Experimental.XenomorphProvider.pdb" />
+        <file src="..\src\XenomorphProvider\bin\Debug\FSharp.Data.Experimental.XenomorphProvider.XML" target="lib/net40\FSharp.Data.Experimental.XenomorphProvider.XML" />
+    </files>
+</package>
