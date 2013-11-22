@@ -52,14 +52,9 @@
   <Import Project="$(FSharpTargetsPath)" Condition="Exists('$(FSharpTargetsPath)')" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <ItemGroup>
-    <Compile Include="ConnectionStringTest.fs" />
     <Compile Include="TypeProvider.Test.fs" />
     <None Include="app.config" />
     <None Include="Test.fsx" />
-    <None Include="sampleCommand.sql" />
-    <None Include="prereqs.sql" />
-    <None Include="SwitchDataSource.fsx" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
@@ -79,7 +74,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="XenomorphProvider">
-      <HintPath>..\src\XenomorphProvider\bin\Debug\XenomorphProvider.dll</HintPath>
+      <HintPath>..\src\FSharp.Data.Experimental.XenomorphProvider\bin\Debug\FSharp.Data.Experimental.XenomorphProvider.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />

@@ -1,45 +1,68 @@
 (** 
 # FSharp.Data.Experimental.XenomorphProvider
 
+This shows a basic example of using the type provider with the XENO database in the Azure SQLLABS cluster.
+
+## Referencing the type provider:
 *)
-#r @"C:\Users\administrator.CORP\Documents\Xenomorph TimeScape\APIs, SDKs, Examples\APIs\v4.0 .NET API\Assemblies\Xenomorph.TimeScape.Client.dll"
-#r @"C:\Users\administrator.CORP\Documents\Xenomorph TimeScape\APIs, SDKs, Examples\APIs\v4.0 .NET API\Assemblies\Xenomorph.Generic.dll"
+#I "../../bin"
+#r "Xenomorph.TimeScape.Client.dll"
+#r "Xenomorph.TimeScape.Client.dll"
+#r "Xenomorph.Generic.dll"
+#r "FSharp.Data.Experimental.XenomorphProvider.dll"
 
-
-#r "../src/FSharp.Data.Experimental.XenomorphProvider/bin/Debug/FSharp.Data.Experimental.XenomorphProvider.dll"
 open FSharp.Data.Experimental
 open System.Linq
 
+(** 
+
+## Referencing the Xenomorph TimeScape database:
+*)
 
 type T = XenomorphProvider<Server = "XENO", UseRefinedTypes=false>
 
 let data = T.GetDataContext()
 
-// TODO: Reaction
+
+(** 
+
+Looking through the sizes of the available collections:
+*)
 
 for x in data.Categories.Collection do 
    printfn "%A" (x.CategoryName, try x.Collection.Count() with _ -> 0)
 
+(** 
+
+Looking through the categories:
+*)
+
 data.Categories
-data.Categories.``Inflation Expectation Rate``.`` (GBR_122M_IE, User)``
-data.Categories.``Inflation Expectation Rate``.Collection
+data.Categories.``GB Equity``
 
 
 for x in data.Categories.``GB Equity``.Collection do 
    printfn "%A" (x.Item.Code)
 
+
+(** 
+
+Looking at a particular equity:
+*)
 data.Categories.``GB Equity``.``SAINSBURY(J) (SBRY.L, Reuters)``.Close
 
-data.Categories.``GB Equity``.``SAINSBURY(J) (SBRY.L, Reuters)``.Close
-
-//data.Future.ItemsByName.
 
 data.Categories.``GB Equity``.``3i GROUP (III.L, Reuters)``.``Amount Issued``
 data.Categories.``GB Equity``.``3i GROUP (III.L, Reuters)``.Close
 
+
+(** 
+
+Looking at a particular properties of a particular equity:
+*)
 data.Categories.Equity.``Amalgamated Oil Company (RIC31239, Reuters)``.Item
 data.Categories.Equity.``Amalgamated Oil Company (RIC31239, Reuters)``.Item.Category
-data.Categories.Equity.``Amalgamated Oil Company (RIC31239, Reuters)``.``Amount Issued`` // TODO - convert exception to None
+data.Categories.Equity.``Amalgamated Oil Company (RIC31239, Reuters)``.``Amount Issued`` 
 data.Categories.Equity.``Amalgamated Oil Company (RIC31239, Reuters)``.Close
 data.Categories.Equity.``Amalgamated Oil Company (RIC31239, Reuters)``.``Close-Previous``
 data.Categories.Equity.``Amalgamated Oil Company (RIC31239, Reuters)``.``Company Website``
@@ -58,6 +81,6 @@ data.Categories.Equity.``Amalgamated Oil Company (RIC31239, Reuters)``.``Settlem
 data.Categories.Equity.``Amalgamated Oil Company (RIC31239, Reuters)``.VolSurf
 data.Categories.Equity.``Amalgamated Oil Company (RIC31239, Reuters)``.Volume
 data.Categories.Equity.``Amalgamated Oil Company (RIC31239, Reuters)``.X_Dividends  
-data.Categories.Equity.``Amalgamated Oil Company (RIC31239, Reuters)``.``Listed Warrants``  // TODO: no data found needs to become option
+data.Categories.Equity.``Amalgamated Oil Company (RIC31239, Reuters)``.``Listed Warrants``  
 
 data.Categories.Equity.``Amalgamated Oil Company (RIC31239, Reuters)``

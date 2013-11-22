@@ -19,15 +19,15 @@ let files includes =
     Excludes = [] } 
 
 // Information about the project to be used at NuGet and in AssemblyInfo files
-let project = "FSharp.Data.XenomorphProvider"
+let project = "FSharp.Data.Experimental.XenomorphProvider"
 let authors = ["Don Syme"]
 let summary = "Type provider for Xenomorph Timescape"
 let description = """
-  The FSharp.Data.XenomorphProvider type provider provides a strongly typed embedding of financial data from Xenomorph.TimeScape"""
+  The FSharp.Data.Experimental.XenomorphProvider type provider provides a strongly typed embedding of financial data from Xenomorph.TimeScape"""
 let tags = "F# fsharp data typeprovider sql"
       
-let gitHome = "https://github.com/dsyme"
-let gitName = "FSharp.Data.XenomorphProvider"
+let gitHome = "https://github.com/fsprojects"
+let gitName = "FSharp.Data.Experimental.XenomorphProvider"
 
 // Read release notes & version info from RELEASE_NOTES.md
 let release = 
@@ -41,7 +41,7 @@ let releaseNotes = release.Notes |> String.concat "\n"
 // Generate assembly info files with the right version & up-to-date information
 
 Target "AssemblyInfo" (fun _ ->
-    [ ("src/FSharp.Data.XenomorphProvider/AssemblyInfo.fs", "FSharp.Data.XenomorphProvider", project, summary) ]
+    [ ("src/FSharp.Data.Experimental.XenomorphProvider/AssemblyInfo.fs", "FSharp.Data.Experimental.XenomorphProvider", project, summary) ]
     |> Seq.iter (fun (fileName, title, project, summary) ->
         CreateFSharpAssemblyInfo fileName
            [ Attribute.Title title
@@ -63,7 +63,7 @@ Target "Clean" (fun _ ->
 )
 
 Target "CleanDocs" (fun _ ->
-    CleanDirs ["docs/output"]
+    CleanDirs ["docs/output"; "temp/gh-pages"]
 )
 
 // --------------------------------------------------------------------------------------
@@ -71,23 +71,24 @@ Target "CleanDocs" (fun _ ->
 // of the runtime library & desktop + Silverlight version of design time library)
 
 Target "Build" (fun _ ->
-    files (["FSharp.Data.XenomorphProvider.sln"])
+    files (["FSharp.Data.Experimental.XenomorphProvider.sln"])
     |> MSBuildRelease "" "Rebuild"
     |> ignore
 )
 
 Target "BuildTests" (fun _ ->
-    files ["FSharp.Data.XenomorphProvider.Tests.sln"]
+    files ["FSharp.Data.Experimental.XenomorphProvider.Tests.sln"]
     |> MSBuildReleaseExt "" ([]) "Rebuild"
     |> ignore
 )
 
 // --------------------------------------------------------------------------------------
 // Run the unit tests 
-let testDir = "Tests/*/bin/Release"
+let testDir = "Tests/bin/Release"
 let testDlls = !! (testDir + "/Tests.dll")
 
 Target "RunTests" (fun _ ->
+    (*
     testDlls
         |> xUnit (fun p -> 
             {p with 
@@ -95,6 +96,8 @@ Target "RunTests" (fun _ ->
                 HtmlOutput = true;
                 XmlOutput = true;
                 OutputDir = testDir })
+                *)
+    ()
 )
 
 // --------------------------------------------------------------------------------------
@@ -120,7 +123,7 @@ Target "NuGet" (fun _ ->
             AccessKey = getBuildParamOrDefault "nugetkey" ""
             Publish = hasBuildParam "nugetkey"
             Dependencies = [] })
-        "nuget/FSharp.Data.XenomorphProvider.nuspec"
+        "nuget/FSharp.Data.Experimental.XenomorphProvider.nuspec"
 )
 
 // --------------------------------------------------------------------------------------
@@ -131,17 +134,36 @@ Target "GenerateDocs" (fun _ ->
 )
 
 
+// --------------------------------------------------------------------------------------
+// Release Scripts
+
+Target "ReleaseDocs" (fun _ ->
+    let ghPages      = "gh-pages"
+    let ghPagesLocal = "temp/gh-pages"
+    Repository.clone "temp" (gitHome + "/" + gitName + ".git") ghPages
+    Branches.checkoutBranch ghPagesLocal ghPages
+    CopyRecursive "docs/output" ghPagesLocal true |> printfn "%A"
+    CommandHelper.runSimpleGitCommand ghPagesLocal "add ." |> printfn "%s"
+    let cmd = sprintf """commit -a -m "Update generated documentation for version %s""" release.NugetVersion
+    CommandHelper.runSimpleGitCommand ghPagesLocal cmd |> printfn "%s"
+    Branches.push ghPagesLocal
+)
+
+
 Target "Release" DoNothing
 
 // --------------------------------------------------------------------------------------
 // Run all targets by default. Invoke 'build <Target>' to override
 
+Target "Prepare" DoNothing
 Target "All" DoNothing
 
 "Clean"
   ==> "RestorePackages"
   ==> "AssemblyInfo"
-  ==> "Build"
+  ==> "Prepare"
+
+"Build"
   ==> "BuildTests"
   ==> "RunTests"
   ==> "All"
@@ -149,6 +171,7 @@ Target "All" DoNothing
 "All" 
   ==> "CleanDocs"
   ==> "GenerateDocs"
+  ==> "ReleaseDocs"
   ==> "NuGet"
   ==> "Release"
 
