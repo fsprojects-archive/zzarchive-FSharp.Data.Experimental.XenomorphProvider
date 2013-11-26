@@ -29,8 +29,7 @@ Contributing
 ------------
 
 The project is hosted on [GitHub][gh] where you can [report issues][issues], fork 
-the project and submit pull requests. If you're adding new public API, please also 
-contribute [samples][samples] that can be turned into a documentation.
+the project and submit pull requests. 
 
  * If you want to discuss an issue or feature that you want to add the to the library,
    then you can submit [an issue or feature request][issues] via Github or you can 
@@ -51,7 +50,6 @@ The library is available under Apache 2.0. For more information see the
 
   [source]: https://github.com/fsprojects/FSharp.Data.Experimental.XenomorphProvider/zipball/master
   [compiled]: https://github.com/fsprojects/FSharp.Data.Experimental.XenomorphProvider/zipball/release
-  [samples]: https://github.com/fsprojects/FSharp.Data.Experimental.XenomorphProvider/tree/master/samples
   [gh]: https://github.com/fsprojects/FSharp.Data.Experimental.XenomorphProvider
   [issues]: https://github.com/fsprojects/FSharp.Data.Experimental.XenomorphProvider/issues
   [license]: https://github.com/fsprojects/FSharp.Data.Experimental.XenomorphProvider/blob/master/LICENSE.md

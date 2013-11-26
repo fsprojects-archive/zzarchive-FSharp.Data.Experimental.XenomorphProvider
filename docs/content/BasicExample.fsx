@@ -7,7 +7,6 @@ This shows a basic example of using the type provider with the XENO database in 
 *)
 #I "../../bin"
 #r "Xenomorph.TimeScape.Client.dll"
-#r "Xenomorph.TimeScape.Client.dll"
 #r "Xenomorph.Generic.dll"
 #r "FSharp.Data.Experimental.XenomorphProvider.dll"
 
