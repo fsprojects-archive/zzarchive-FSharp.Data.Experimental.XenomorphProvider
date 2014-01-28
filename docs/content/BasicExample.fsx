@@ -1,7 +1,8 @@
 (** 
 # FSharp.Data.Experimental.XenomorphProvider
 
-This shows a basic example of using the type provider with the XENO database in the Azure SQLLABS cluster.
+This shows a fBid
+ example of using the type provider with the XENO database in the Azure SQLLABS cluster.
 
 ## Referencing the type provider:
 *)
@@ -50,8 +51,9 @@ Looking at a particular equity:
 *)
 data.Categories.``GB Equity``.``SAINSBURY(J) (SBRY.L, Reuters)``.Close
 
+data.Categories.``GB Equity``.``SAINSBURY(J) (SBRY.L, Reuters)``.Ask |> Observable.add(fun obj -> printfn "%A" obj)
+data.Categories.``GB Equity``.``SAINSBURY(J) (SBRY.L, Reuters)``.Bid |> Observable.add(fun obj -> printfn "%A" obj)
 
-data.Categories.``GB Equity``.``3i GROUP (III.L, Reuters)``.``Amount Issued``
 data.Categories.``GB Equity``.``3i GROUP (III.L, Reuters)``.Close
 
 

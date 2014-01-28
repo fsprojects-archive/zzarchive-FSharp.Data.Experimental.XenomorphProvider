@@ -19,11 +19,16 @@ open Samples.FSharp.ProvidedTypes
 
 [<AutoOpen>]
 module internal Utilities = 
-        let catchStart (s:seq<'T>) = 
-            { new seq<'T> with 
-                 member x.GetEnumerator() = try s.GetEnumerator() with _ -> Seq.empty.GetEnumerator()
-              interface System.Collections.IEnumerable with 
-                 member x.GetEnumerator() = (s.GetEnumerator()) :> System.Collections.IEnumerator }
+    let catchStart (s:seq<'T>) = 
+        { new seq<'T> with 
+                member x.GetEnumerator() = try s.GetEnumerator() with _ -> Seq.empty.GetEnumerator()
+            interface System.Collections.IEnumerable with 
+                member x.GetEnumerator() = (s.GetEnumerator()) :> System.Collections.IEnumerator }
+
+    let initLazy = 
+      lazy
+        EventExtension.add_OnSourceStatusChange(fun ch -> () (* printfn "Status change: %A" ch.Status *))
+        EventExtension.add_OnError(fun err -> () (* printfn "Error: %A" err.Error.Message *) )
 
 type XenoConnection(server:string) = 
     let db = new Database(server)
@@ -40,7 +45,35 @@ type XenoItem(item: Item) =
     // member x.Connection = item.Database
     /// The underlying object for the item
     member x.Item = item
+    member x._GetPropertyChange(propertyName:string, dataSource:string) = 
+        initLazy.Force()
+#if REAL
+        let itemTick = item //new Item(data, item.Code, item.CodeType)
+#else
+        // TODO: This only works if the DEMOTICK is on the local server for now
+        let server = new Server()
+        // TODO: DEMOTICK is a sample ticking data source provided by xenomorph.
+        let dbTick = new Database(server, "DEMOTICK")
+        // TODO: Reuters should not be hardwired here
+        let itemTick = new Item(dbTick, item.Code, item.CodeType)
+#endif
+        { new System.IObservable<DateTime * double> with 
+             member x.Subscribe(obs) = 
+                //printfn "subscribing..."
+                let listener = 
+                  { new IPropertySubscriptionListener with 
+                       member x.OnSubscriptionError(error, evArgs) = () 
+                       member x.OnUnsubscriptionError(error, evArgs) = () 
+                       member x.OnSubscriptionSuccess(b, evArgs) = () 
+                       member x.OnUnsubscriptionSuccess(a, evArgs) = () 
+                       member x.OnPropertyUpdate(update, evArgs) = obs.OnNext(update.Timestamp, (update.Value :?> double)) }
 
+                itemTick.SubscribePropertyChange(propertyName, dataSource, listener)
+                //printfn "subscribed..."
+
+                { new System.IDisposable with 
+                    member x.Dispose() = itemTick.UnsubscribePropertyChange(propertyName, dataSource) } 
+         }
 
 type XenoCategory(database: Database, category: string) = 
     /// The name of the category 
@@ -225,6 +258,16 @@ type XenomorphProviderImplementation(config : TypeProviderConfig) as this =
             p.AddXmlDocDelayed(fun () -> "<summary>" + escape catProp.Description + "</summary>")
             p
 
+        let makeProvidedPropertyForItemEventProperty (cat:string) (propName: string) = 
+            let propType = typeof<System.IObservable<DateTime * double>>
+            let dataSource = "IDN_RDF"
+            let p = ProvidedProperty(propName, propType,GetterCode=(fun args -> 
+                <@@ ( %%args.[0] : XenoItem)._GetPropertyChange(propName,dataSource) @@> 
+                    ))
+            p.AddXmlDocDelayed(fun () -> "<summary>Get an observable of the " + propName + " property</summary>")
+            p
+
+
         let categoryTypes = 
             [  for cat in db.GetCategories() do
 
@@ -236,7 +279,11 @@ type XenomorphProviderImplementation(config : TypeProviderConfig) as this =
 
                     [ for catProp in catProps do
                         let p = makeProvidedPropertyForItemProperty catProp
-                        yield p ])
+                        yield p 
+                      yield makeProvidedPropertyForItemEventProperty cat "Ask" //"_AskSample" 
+                      yield makeProvidedPropertyForItemEventProperty cat "Bid" //"_AskSample" 
+                      //yield makeProvidedPropertyForItemEventProperty cat "BidSample" 
+                      ])
 
                 serviceTypesType.AddMember catEntityType
 
