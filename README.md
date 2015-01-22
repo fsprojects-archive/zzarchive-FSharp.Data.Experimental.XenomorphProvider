@@ -1,6 +1,9 @@
+[![Issue Stats](http://issuestats.com/github/fsprojects/FSharp.Data.Experimental.XenomorphProvider/badge/issue)](http://issuestats.com/github/fsprojects/FSharp.Data.Experimental.XenomorphProvider)
+[![Issue Stats](http://issuestats.com/github/fsprojects/FSharp.Data.Experimental.XenomorphProvider/badge/pr)](http://issuestats.com/github/fsprojects/FSharp.Data.Experimental.XenomorphProvider)
+
 FSharp.Data.XenomorphProvider
 ==============================
-
+[![NuGet Status](http://img.shields.io/nuget/v/FSharp.Data.Experimental.XenomorphProvider.svg?style=flat)](https://www.nuget.org/packages/FSharp.Data.Experimental.XenomorphProvider/)
 ## Features
 
 * Sample showing typed access to Xenomorph data
